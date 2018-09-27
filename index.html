@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="assets/css/ionicons.min.css">
+  <link rel="stylesheet" href="assets/css/animate.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <title>Document</title>
+</head>
+<body>
+  
+  <div id="app">
+    
+    <div id="side-bar">
+      <div class="nav-bar">
+        
+        <div class="menu-item">
+          
+          <!-- harmburger menu -->
+          <div class="harmburger">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          
+          <li class="search">
+            <div class="label">
+              <i class="ion-ios-search-strong"></i>
+              <span>Search</span>
+            </div>
+          </li>
+          <li class="music">
+            <div class="label">
+              <i class="ion-ios-musical-note"></i>
+              <span>Music</span>
+            </div>
+          </li>
+          <li class="refresh">
+            <div class="label">
+              <i class="ion-ios-refresh-empty"></i>
+              <span>Refresh</span>
+            </div>
+          </li>
+          <li class="setting">
+            <div class="label">
+              <i class="ion-ios-cog-outline"></i>
+              <span>Settings</span>
+            </div>
+          </li>
+          <li class="favorite">
+            <div class="label">
+              <i class="ion-ios-heart"></i>
+              <span>Favorite</span>
+              <i class="ion-ios-arrow-down arrow"></i>
+            </div>
+            <ul class="fav-item">
+            
+            </ul>
+          </li>
+          
+          
+        </div>
+      </div>
+    </div>
+    
+    <div class="music-container">
+      
+    </div>
+    
+    <div class="player-control">
+      <section class="block1">
+        <div class="cover">
+          <img src="assets/img/avatar.png" alt="">
+        </div>
+        <div class="player-name">
+          <p class="title">Track is Emapty</p>
+          <p class="artist">--</p>
+        </div>
+      </section>
+      
+      <section class="block2">        
+        <div class="controls">
+          <div class="buttons-control">
+            <div id="shuffle-button" title="Shuffle Off"><i class="ion-ios-shuffle-strong"></i></div>
+            <div id="previous-button" title="Previous"><i class="ion-ios-skipbackward"></i></div>
+            <div id="playPause-button" title="Play"><i class="ion-ios-play"></i></div>
+            <div id="next-button" title="Next"><i class="ion-ios-skipforward"></i></div>
+            <div id="repeat-button" title="Repeat Off"><i class="ion-ios-refresh-empty"><span>1</span></i></div>
+          </div>
+          <div class="progress">
+            <div class="current-time">--/--</div>
+            <div class="seek-bar">
+              <div class="seek-fill"></div>
+            </div>
+            <div class="duration-time">--/--</div>
+          </div>
+        </div>
+      </section>
+      
+    </div>
+  </div>
+  
+  <!-- <script src="assets/js/jquery3.3.1.min.js"></script> -->
+  <script src="assets/js/player.js"></script>
+</body>
+</html>
