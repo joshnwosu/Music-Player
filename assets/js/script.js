@@ -3,7 +3,8 @@ const os = require('os'),
       path = require('path'),
       homedir = os.homedir(),
       mm = require('music-metadata'),
-      util = require('util');
+      util = require('util'),
+      $ = require('jquery')
 
 let audioFile = [],
     allTrack = [],
@@ -86,7 +87,7 @@ audioFile.forEach((file, index)=> {
 
 function renderHTML(song, index) {
   let html = `
-      <li class="track" ondblclick="clickToPlay(${index}, this)">
+      <li class="track" data-index='${index}'>
         <div class="index">${index + 1}</div>
         <div class="title">${song.title}</div>
         <i id="${index}" class="ion-ios-heart-outline" onclick="addToFavorite('${index}', this)"></i>
@@ -142,6 +143,12 @@ function playTrack(number) {
       lastPlayed.push(number);
     };
 
+    let indeces = document.querySelectorAll('.index');
+    for (let i = 0; i < indeces.length; i++) {
+      indeces[i].innerHTML = i + 1
+    }
+    indeces[number].innerHTML = '<i class="ion-ios-volume-high"></i>';
+
     let playerLabel = document.querySelector('.player-name');
     let labelTitle = playerLabel.querySelector('.title');
     let labelArtist  = playerLabel.querySelector('.artist');
@@ -158,6 +165,7 @@ function playTrack(number) {
 
         var src = 'assets/img/avatar.png';
         document.querySelector('.cover img').setAttribute('src',src);
+        document.querySelector('.tooltip img').setAttribute('src', src)
         
         var image = metadata.common.picture[0];
         if(image) {
@@ -167,6 +175,7 @@ function playTrack(number) {
           }
           var base64 = "data:" + image.format + ";base64," + window.btoa(base64String);
           document.querySelector('.cover img').setAttribute('src',base64);
+          document.querySelector('.tooltip img').setAttribute('src', base64)
         }
         
       })
@@ -412,18 +421,26 @@ harmburgerMenu.addEventListener('click', ()=> {
   favItem.classList.toggle('show');
 });
 
-function clickToPlay(id, that) {
-  if(id == undefined) return;
+let searchBtn = document.querySelector('.search');
+var searchInput = $('input');
+let searchInputContainer = document.querySelector('.search-input');
 
-  else {
-    if (audio.played) {
-      playPauseBtn.querySelector('i').setAttribute('class', 'ion-ios-pause')
-    }
-    counter = id;
-    playTrack(counter);
-  }
-  console.log(id);
-}
+searchBtn.addEventListener('click', function() {
+  searchInputContainer.classList.toggle('isDown')
+})
+
+// function clickToPlay(id, that) {
+//   if(id == undefined) return;
+
+//   else {
+//     if (audio.played) {
+//       playPauseBtn.querySelector('i').setAttribute('class', 'ion-ios-pause')
+//     }
+//     counter = id;
+//     playTrack(counter);
+//   }
+//   console.log(id);
+// }
 let favoriteItem = JSON.parse(localStorage.getItem('favoriteItem')) || [],
     likesFav = JSON.parse(localStorage.getItem('likesFav')) || [],
     likeIcon = 'ion-ios-heart',
@@ -482,3 +499,105 @@ function removeFromFavorite(id) {
   localStorage.setItem('favoriteItem', JSON.stringify(favoriteItem));
   getFavoriteItems();
 }
+
+$('.music-container').on('dblclick', function(e) {
+  // Get the index of the clicked track.
+
+  var target = $(e.target),
+      index = target.closest('.track').data('index');
+      
+  if(index != undefined) {
+    if (temporarySearchPlaylist.length) {
+      playlist = temporarySearchPlaylist.slice(0);
+      temporarySearchPlaylist = [];
+      lastPlayed = [];
+    }
+    if (audio.played) {
+      playPauseBtn.querySelector('i').setAttribute('class', 'ion-ios-pause')
+    }
+    counter = index;
+    playTrack(counter);
+    console.log(counter)
+  }
+});
+
+var clearSearchDelay;
+
+searchInput.on('keydown', function(e) {
+  if (e.keyCode == 27) {
+    $(this).val('');
+    $(this).trigger('input');
+  }else if (e.keyCode == 13){
+    e.preventDefault();
+    if ($(this).val().trim().length) {
+      var searchString = $(this).val().trim();
+      searchTracks(searchString);
+      clearTimeout(clearSearchDelay);
+    }
+  }
+});
+
+searchInput.on('input', function(e) {
+  e.preventDefault();
+  var searchStr = $(this).val().trim();
+
+  clearTimeout(clearSearchDelay);
+  if(!searchStr.length) {
+    searchInput.val('');
+    searchTracks();
+  }else {
+    clearSearchDelay = setTimeout(function() {
+      if(searchStr.length) {
+        searchTracks(searchStr)
+      }
+    },700)
+  }
+});
+
+function searchTracks(query) {
+  query = query || "";
+  query = query.toLowerCase();
+
+  temporarySearchPlaylist = allTrack.slice(0);
+
+  if (query.length) {
+    temporarySearchPlaylist = temporarySearchPlaylist.filter(function(tr) {
+      if(tr.artist.toLowerCase().indexOf(query) != -1 || tr.title.toLowerCase().indexOf(query) != -1 || tr.album.toLowerCase().indexOf(query) != -1){
+        return tr;
+      }
+    })
+  }
+  renderTrackList(temporarySearchPlaylist);
+};
+
+function returnTrackHTML(song, index) {
+  var html =
+    ` <li class="track" data-index='${index}'>
+        <div class="index">${index + 1}</div>
+        <div class="title">${song.title}</div>
+        <i id="${index}" class="ion-ios-heart-outline" onclick="addToFavorite('${index}', this)"></i>
+        <div class="artist">${song.artist}</div>
+        <div class="album">${song.album}</div>
+        <div class="genre">${song.genre}</div>
+        <div class="year">${song.year}</div>
+        <div class="time">${convertTime(song.duration)}</div>
+      </li>`;
+    return html;
+}
+
+
+function renderTrackList(list) {
+  $('.track').remove();
+  var html = list.map(function(tr, index) {
+    return returnTrackHTML(tr, index);
+  }).join('');
+  // $('.musicContainer').append($(html));
+  musicContainer.innerHTML = html;
+};
+
+
+
+
+
+
+
